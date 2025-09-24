@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {TextField, Button, Card, CardContent, Typography,} from "@mui/material";
+import {TextField, Button, Card, CardContent, Typography, Box} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const ExpenseForm = ({ onExpenseAdded }) => {
+
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
 
@@ -19,7 +23,7 @@ const ExpenseForm = ({ onExpenseAdded }) => {
       onExpenseAdded(response.data);
 
       setTitle("");
-      setAmount("");
+      setAmount(0);
       setCategory("");
       setDate("");
     } catch (err) {
@@ -28,7 +32,7 @@ const ExpenseForm = ({ onExpenseAdded }) => {
   };
 
   return (
-    <Card sx={{ maxWidth: 500, margin: "20px auto" }}>
+    <Card elevation={7} sx={{ maxWidth: 500, margin: "20px auto"}}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           Add Expense
@@ -50,7 +54,7 @@ const ExpenseForm = ({ onExpenseAdded }) => {
             placeholder="Enter the Amount"
             type="number"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => setAmount(Number(e.target.value))}
             fullWidth
             margin="normal"
           />
@@ -74,15 +78,12 @@ const ExpenseForm = ({ onExpenseAdded }) => {
             InputLabelProps={{ shrink: true }}
           />
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            Add Expense
-          </Button>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", gap:2, mt: 2 }}>
+            <Button type="submit" variant="contained" color="primary" sx={{flex:1}} >Add Expense</Button>
+            <Button variant="contained" color="error"onClick={() => navigate("/")} sx={{flex:1}}>Back</Button>
+          </Box>
+
         </form>
       </CardContent>
     </Card>

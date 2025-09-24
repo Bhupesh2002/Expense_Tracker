@@ -1,46 +1,24 @@
-import axios from "axios";
+import Navbar from "./components/Navbar";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import ExpensesPage from "./components/pages/Expensepage";
+import Homepage from "./components/pages/Homepage";
 import ExpenseForm from "./components/ExpenseForm";
-import ExpenseList from "./components/ExpenseList";
-import { useEffect, useState } from "react";
-import { Container, Typography } from "@mui/material";
+import useExpenseHandlers from "./components/hooks/ExpenseHook";
 
 function App() {
-  const [expense, setExpense] = useState([]);
 
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/expenses");
-        setExpense(response.data);
-      } catch (err) {
-        console.error("Error Fetching Data:", err);
-      }
-    };
-    fetchExpenses();
-  }, []);
-
-  const handleExpenseAdded = (newExpense) => {
-    setExpense((prev) => [...prev, newExpense]);
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/expenses/${id}`);
-      setExpense((prev) => prev.filter((ex) => ex._id !== id));
-    } catch (err) {
-      console.error("Error Deleting Expense:", err);
-    }
-  };
-
+  const { expense, handleDelete, handleEdit } = useExpenseHandlers();
+  
   return (
-    <Container>
-      <Typography variant="h4" align="center" gutterBottom sx={{ mt: 3 }}>
-        Expense Tracker
-      </Typography>
-
-      <ExpenseForm onExpenseAdded={handleExpenseAdded} />
-      <ExpenseList expenses={expense} onDelete={handleDelete} />
-    </Container>
+    <Router>
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={<Homepage expenses={expense}/>}/>
+        <Route path="/add_expense" element={ <ExpenseForm/> }/>
+        <Route path="/expenses" element={ <ExpensesPage expenses={expense}  
+        onDelete={handleDelete} onEdit={handleEdit}/>}/>
+      </Routes>
+    </Router>
   );
 }
 
